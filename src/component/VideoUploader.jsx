@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import videoLogo from '../assets/video-marketing-2.png'
 import { Alert, Button, Card, FileInput, Label, Progress, Textarea, TextInput } from 'flowbite-react'
 import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 
 function VideoUploader() {
 
@@ -11,7 +12,7 @@ function VideoUploader() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [progress, setProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
-  const [message, setMessage] = useState("");
+  // const [message, setMessage] = useState("");
   const [metaData, setMetaData] = useState({
     title: "",
     description: "",
@@ -28,6 +29,19 @@ function VideoUploader() {
       ...metaData,
       [event.target.name]: event.target.value
     })
+  }
+
+  function resetForm() {
+
+    setMetaData({
+      title: "",
+      description: "",
+    });
+    setSelectedFile(null);
+    setIsUploading(false);
+    
+    
+
   }
 
   function handleForm(formEvent) {
@@ -75,6 +89,7 @@ function VideoUploader() {
 
       console.log(response);
       setMessage("File Uploaded!");
+      toast.success("File Uploaded!");
       setIsUploading(false);
       setProgress(0);
 
@@ -82,12 +97,16 @@ function VideoUploader() {
 
     } catch (err) {
       console.log(err);
-      setMessage("Error occured i uploading file!");
+      setMessage("Error occured uploading file!");
+      toast.error("Error occured uploading file!");
       setIsUploading(false);
     }
   }
 
   return (
+    <>
+    <Toaster />
+
     <div className="text-white">
       <Card className='flex flex-col items-center'>
         <h1>Upload Video</h1>
@@ -104,14 +123,14 @@ function VideoUploader() {
                 <div className="mb-2 block">
                   <Label htmlFor="file-upload" value="Video Title" />
                 </div>
-                <TextInput onChange={setFieldData} name='title' placeholder='Enter Title' required />
+                <TextInput onChange={setFieldData} value={metaData.title} name='title' placeholder='Enter Title' required />
               </div>
 
               <div className='flex flex-col'>
                 <div className="mb-2 block">
                   <Label htmlFor="comment" value="Video Description" />
                 </div>
-                <Textarea onChange={setFieldData} name='description' id="comment" placeholder="Enter Video Description" required rows={4} />
+                <Textarea onChange={setFieldData} name='description' value={metaData.description} id="comment" placeholder="Enter Video Description" required rows={4} />
               </div>
 
             </div>
@@ -147,18 +166,18 @@ function VideoUploader() {
                 labelText />
               }
             </div>
-            <div className="">
+            {/* <div className="">
               {
               message && <Alert 
-                color={"success"} 
-                onDismiss={() => this.disabled}
+                color={messageType==="success" ? "success" : "warning"} 
+                onDismiss={() => this.style.display = "none"}
                 rounded
                 withBorderAccent
                 >
-                <span className="font-medium">Success alert!</span> {message}
+                <span className="font-medium">{messageType} alert!</span> {message}
               </Alert>
               }
-            </div>
+            </div> */}
 
             <div className='flex justify-center'>
               <Button disabled={isUploading} type='submit'>Upload</Button>
@@ -170,6 +189,7 @@ function VideoUploader() {
 
       </Card>
     </div>
+    </>
 
   )
 }
